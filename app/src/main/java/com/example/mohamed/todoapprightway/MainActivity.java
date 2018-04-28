@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         myDatabaseOpenHelper = new MyDatabaseOpenHelper(this);
         sqLiteDatabase = myDatabaseOpenHelper.getReadableDatabase();
 
-        Cursor cursor = sqLiteDatabase.rawQuery("select * from team ",null);
+        Cursor cursor = sqLiteDatabase.rawQuery("select * from team ", null);
 
         cursor.moveToFirst();
 
@@ -60,35 +60,39 @@ public class MainActivity extends AppCompatActivity {
             arrayList.add(cursor.getString(1));
             cursor.moveToNext();
         }
-       final ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayList);
+        final ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayList);
         taskListView.setAdapter(arrayAdapter);
 
         cursor.close();
-        taskListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
-                myDatabaseOpenHelper=new MyDatabaseOpenHelper(MainActivity.this);
-                sqLiteDatabase=myDatabaseOpenHelper.getWritableDatabase();
-                sqLiteDatabase.execSQL("DELETE FROM team where name=? ",
-                        new String[]{arrayAdapter.getItem(position).toString()});
-                startActivity(new Intent(MainActivity.this, MainActivity.class));
-                return false;
-            }
-        });
 
         taskListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(MainActivity.this,ReadTeamMember.class);
+                Intent i = new Intent(MainActivity.this, ReadTeamMember.class);
 
-               i.putExtra("id", arrayAdapter.getItem(position).toString());
-               nameItem=arrayAdapter.getItem(position).toString();
-               i.putExtra("position",String.valueOf(position));
+                i.putExtra("id", arrayAdapter.getItem(position).toString());
+                nameItem = arrayAdapter.getItem(position).toString();
+                i.putExtra("position", String.valueOf(position));
                 startActivity(i);
+
             }
         });
 
+
+        taskListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                myDatabaseOpenHelper = new MyDatabaseOpenHelper(MainActivity.this);
+                sqLiteDatabase = myDatabaseOpenHelper.getWritableDatabase();
+
+                sqLiteDatabase.execSQL("DELETE FROM team where name=? ",
+                        new String[]{arrayAdapter.getItem(position).toString()});
+
+                startActivity(new Intent(MainActivity.this, MainActivity.class));
+                return true;
+            }
+        });
 
 
     }
